@@ -1,10 +1,21 @@
 #!/bin/bash
-echo "Top 5 IP addresses with the most requests:"
-grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' nginx-access.log | sort -r| uniq -c | sort -k1nr | head -n 5 \
-| awk '{print $2,"-", $1, "request"}'
-echo -e "\nTop 5 IP addresses with the most requests:"
-grep -o '"[A-Z]*\s/[^"]*"' nginx-access.log | sort -r| uniq -c | sort -k1nr | head -n 5 \
-| awk '{print $2,"-", $1, "request"}'
-echo -e "\nTop 5 response status codes:"
-grep -oe '[0-9]\+\s[0-9]\+' nginx-access.log | sort -r| uniq -c | sort -k1nr | head -n 5\
-| awk '{print $2,"-", $1, "request"}'
+if [ $# -lt 1 ];
+then 
+	echo "Usage: $0 <nginx-log-file>"
+	exit 1
+fi
+
+if [ -f $1 ];
+then
+	echo "Top 5 IP addresses with the most requests:"
+	grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' $1 | sort -r| uniq -c | sort -k1nr | head -n 5 \
+	| awk '{print $2,"-", $1, "request"}'
+	echo -e "\nTop 5 IP addresses with the most requests:"
+	grep -o '"[A-Z]*\s/[^"]*"' $1 | sort -r| uniq -c | sort -k1nr | head -n 5 \
+	| awk '{print $2,"-", $1, "request"}'
+	echo -e "\nTop 5 response status codes:"
+	grep -oe '[0-9]\+\s[0-9]\+' $1 | sort -r| uniq -c | sort -k1nr | head -n 5\
+	| awk '{print $2,"-", $1, "request"}'
+else
+	echo "This is not a log file."
+fi
